@@ -4,6 +4,7 @@ import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 
+// Validation schema
 const schema = yup.object().shape({
   Name: yup.string().required('Name is required'),
   Email: yup.string().email('Invalid email format').required('Email is required'),
@@ -24,14 +25,14 @@ export const ContactUs = () => {
   const { TextArea } = Input;
   const [status, setStatus] = useState("");
 
+  // Get backend URL from env variable (fallback to localhost for dev)
+  const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5001/api/contact";
+
   const onSubmit = async (data) => {
     try {
-      // send request to backend
-      const response = await fetch("http://localhost:5001/api/contact", {
+      const response = await fetch(API_URL, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           name: data.Name,
           email: data.Email,
@@ -43,12 +44,12 @@ export const ContactUs = () => {
 
       if (result.success) {
         setStatus("✅ Message sent successfully!");
-        reset(); // clear form
+        reset(); // clear form fields
       } else {
         setStatus("❌ Failed to send message. Try again.");
       }
     } catch (error) {
-      console.error(error);
+      console.error("Error submitting form:", error);
       setStatus("❌ Error connecting to server.");
     }
   };
@@ -58,12 +59,14 @@ export const ContactUs = () => {
       <p className="contactstyle1">Contact Us</p>
       <div className="container">
         <div className="row">
+          {/* Left form section */}
           <div className="col-12 col-md-6" id="antdleft">
             <p className="contactustext1">
               Have questions or need more information? Reach out to Oasis Preschool through our contact details below, or fill out our inquiry form, and we'll be happy to assist you!
             </p>
 
             <form onSubmit={handleSubmit(onSubmit)}>
+              {/* Name */}
               <div className="form-group">
                 <label>Name</label>
                 <Controller
@@ -73,6 +76,8 @@ export const ContactUs = () => {
                 />
                 {errors.Name && <p className="error">{errors.Name.message}</p>}
               </div>
+
+              {/* Email */}
               <div className="form-group">
                 <label>Email</label>
                 <Controller
@@ -82,6 +87,8 @@ export const ContactUs = () => {
                 />
                 {errors.Email && <p className="error">{errors.Email.message}</p>}
               </div>
+
+              {/* Phone Number */}
               <div className="form-group">
                 <label>Phone Number</label>
                 <Controller
@@ -91,6 +98,8 @@ export const ContactUs = () => {
                 />
                 {errors.PhoneNumber && <p className="error">{errors.PhoneNumber.message}</p>}
               </div>
+
+              {/* Subject */}
               <div className="form-group">
                 <label>Subject</label>
                 <Controller
@@ -100,6 +109,8 @@ export const ContactUs = () => {
                 />
                 {errors.Subject && <p className="error">{errors.Subject.message}</p>}
               </div>
+
+              {/* Message */}
               <div className="form-group">
                 <label>Message</label>
                 <Controller
@@ -109,13 +120,16 @@ export const ContactUs = () => {
                 />
                 {errors.Message && <p className="error">{errors.Message.message}</p>}
               </div>
+
+              {/* Submit button */}
               <button type="submit" className="contactbutton">Submit</button>
             </form>
 
-            {/* status feedback */}
+            {/* Feedback message */}
             {status && <p style={{ marginTop: "10px" }}>{status}</p>}
           </div>
 
+          {/* Right info section */}
           <div className="col-12 col-md-6 position-relative">
             <img src="./images/designcon.jpg" alt="" className="contactrect" />
             <div className="text-overlay">
@@ -135,6 +149,8 @@ export const ContactUs = () => {
           </div>
         </div>
       </div>
+
+      {/* Map section */}
       <div className="container">
         <img src="./images/map.jpg" alt="" className="map" />
       </div>
